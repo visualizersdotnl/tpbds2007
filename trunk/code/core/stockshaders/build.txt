@@ -1,0 +1,2 @@
+PS: fxc /E core_ss_$(InputName) /T ps_3_0 /Fh "$(InputPath)h" "$(InputPath)"
+VS: fxc /E core_ss_$(InputName) /T vs_3_0 /Fh "$(InputPath)h" "$(InputPath)"

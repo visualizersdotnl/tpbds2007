@@ -1,0 +1,19 @@
+
+// tpbds -- simple particle shader
+
+#include "../../core/stdps.inc"
+
+sampler2D textureMap;
+
+struct VS_OUTPUT 
+{
+	float4 color : COLOR0;
+	float2 UV : TEXCOORD0;
+};
+
+float4 utility_ss_particle(in VS_OUTPUT input) : COLOR
+{
+	float2 UVcentered = input.UV - 0.5;
+	float shade = 1 - sqrt(dot(UVcentered, UVcentered)) * 2;
+	return input.color * shade * tex2D(textureMap, input.UV);
+}

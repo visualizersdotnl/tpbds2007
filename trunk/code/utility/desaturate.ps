@@ -1,0 +1,21 @@
+
+// tpbds -- NTSC-correct desaturation shader
+
+// uploaded to PS_USER_CI
+float4 vBlendFacAndAlpha : register(c4);
+
+sampler2D inputBuffer;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	float4 color = tex2D(inputBuffer, input.UV);
+	float4 grayColor;
+	grayColor.xyzw = color.x * 0.3 + color.y * 0.59 + color.z * 0.11; // NTSC weights.
+	float4 finalColor = lerp(color, grayColor, vBlendFacAndAlpha.x);
+	return float4(finalColor.xyz, color.w * vBlendFacAndAlpha.y);
+}

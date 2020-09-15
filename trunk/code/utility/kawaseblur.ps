@@ -1,0 +1,44 @@
+
+// tpbds -- simple 4-tap blur shader
+
+// uploaded to PS_USER_CI
+float4 vUVDeltasAndAlpha : register(c4);
+
+sampler2D inputBuffer;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	// These UV deltas must be the exact measurement of half a pixel in the space we're working with (typically [0, 1] on each axis).
+	float uDelta = vUVDeltasAndAlpha.x;
+	float vDelta = vUVDeltasAndAlpha.y;
+
+	float2 curUV;
+	float3 color;
+
+	// Top left.
+	curUV.x = input.UV.x - uDelta;	
+	curUV.y = input.UV.y + vDelta;	
+	color = tex2D(inputBuffer, curUV);
+
+	// Top right.
+	curUV.x = input.UV.x + uDelta;	
+	curUV.y = input.UV.y + vDelta;	
+	color += tex2D(inputBuffer, curUV);
+
+	// Bottom right.
+	curUV.x = input.UV.x + uDelta;	
+	curUV.y = input.UV.y - vDelta;	
+	color += tex2D(inputBuffer, curUV);
+
+	// Bottom left.
+	curUV.x = input.UV.x - uDelta;	
+	curUV.y = input.UV.y - vDelta;	
+	color += tex2D(inputBuffer, curUV);
+
+	return float4(color * 0.25, vUVDeltasAndAlpha.z);
+}

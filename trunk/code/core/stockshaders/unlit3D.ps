@@ -1,0 +1,18 @@
+
+// tpbds -- stock shader: unlit 3D
+
+#include "../stdps.inc"
+
+sampler2D diffuseMap;
+
+struct VS_OUTPUT 
+{
+	float4 color : COLOR0;
+	float2 UV : TEXCOORD0;
+	float1 viewZ : TEXCOORD1;
+};
+
+float4 core_ss_unlit3D(in VS_OUTPUT input) : COLOR
+{
+	return ApplyLinearFog(input.viewZ, input.color * tex2D(diffuseMap, input.UV));
+} 

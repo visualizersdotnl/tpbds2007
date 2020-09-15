@@ -1,0 +1,21 @@
+
+// tpbds -- gain shader
+
+// uploaded to PS_USER_CI
+float4 vGainParams : register(c4);
+
+sampler2D textureMap;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	float4 color = tex2D(textureMap, input.UV);
+	float3 luminanceCoeff = float3(0.2125, 0.7154, 0.0721);
+	float intensity = dot(color, luminanceCoeff);
+	float3 gainColor = lerp(color, color.xyz * intensity, vGainParams.x);
+	return float4(gainColor, color.w);
+}

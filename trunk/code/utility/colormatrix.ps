@@ -1,0 +1,24 @@
+
+// tpbds -- color matrix transformation shader
+
+#include "../core/stdps.inc"
+
+// uploaded to PS_USER_CI
+float4x4 mColorTrans : register(c4);
+float4 vAlphaAndZeroes : register(c8);
+
+sampler2D inputBuffer;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	float4 color = tex2D(inputBuffer, input.UV);
+	float4 tempColor = float4(color.rgb, 1); // Added by Pan, it allows offset tricks.
+	float4 transColor = clamp(mul(mColorTrans, tempColor), 0, 1);
+	transColor.w = color.w * vAlphaAndZeroes.x;
+	return transColor;
+}

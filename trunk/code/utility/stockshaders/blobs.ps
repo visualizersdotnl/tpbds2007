@@ -1,0 +1,17 @@
+
+// tpbds -- oldschool metaball shader
+
+#include "../../core/stdps.inc"
+
+sampler2D diffuseMap;
+
+struct VS_OUTPUT 
+{
+	float4 color : COLOR0;
+	float2 UV : TEXCOORD0;
+};
+
+float4 utility_ss_blobs(in VS_OUTPUT input) : COLOR
+{
+	return input.color * tex2D(diffuseMap, input.UV); 
+}

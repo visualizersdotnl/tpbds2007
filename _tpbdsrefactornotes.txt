@@ -1,0 +1,59 @@
+
+HINT: TEXFLAGS BENDE FOUT (TILE ENZO BESTAAT NIET)
+HINT: D3DXCREATETEXTUREFROMFILE SCALED ONWENSELIJK OP XBOX -- HIER OOK?
+
+Naderhand de oude secretdesire wissen uit het depot, de nieuwe terugplaatsen en losse copies verwijderen, behalve van dev.
+
+Style:
+- Quotes: 'letterlijk' en "figuurlijk".
+- Operator overloads: spatie voor parameter lijst *en* spatie va &/*.
+- Een __declspec komt voor alles.
+- Refereren in comments: 'see bla.h'.
+- Altijd // ^^ doen in plaats van // ^ wanneer je refereert aan iets bovenstaands.
+- Math operators mogen waar het goed staat best aan elkaar (A = B/C); ga dit niet lopen retrofitten.
+- Comments worden normalize zinnen.
+- Headerguards _ZIEN_ER_ZO_UIT_H_.
+- Const gebruik sensible houden.
+- Const is niet zo'n heet hangijzer bij SIMD Stuff.
+- Gebruik size_t waar mogelijk en belangrijker, waar nodig.
+- ZO nu en dan mag numBytes/byteOffs best size/offset heten, als het maar enigzins logisch aanvoelt.
+- Error messages beginnen met 'Can not'.
+- FIX_MEs toevoegen waar nodig.
+- Boolean states heten veelal isDit/hasDat (preferred), tenzij 'dit' gewoon logisch voelt.
+
+Class style:
+- Minder separatie van functies en members.
+- Private, protected en public use nalopen.
+- Static eerst, functies eerst, variabelen laatst.
+
+Doen tijdens restylen:
+- Audio: Param. lijst moet 'iDevice' ipv. iDevice? Zie Hypnoglow blitter!
+- Math: haal alle 'rad' weg uit variable names, dat is obvious!
+- Directory structure aanleggen, nu is het moment!
+- LWO referenties wegslopen, dat maakt toch plaats voor iets anders.
+- Flawless compile voor x86 en x64.
+- Wat doet VS9/afxres.h er nog?
+- Shaders beetje commenten (document b.v de NTSC/luminance weights).
+- SetLastError(const std::string &description) i.p.v &desc.
+- Blobs renamen naar metaballs en terminologie/table origin reviewen.
+  + http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
+  + Downloads/marchingsource.cpp (goede uitleg tabellen!)
+
+Concreet (zo nodig bijschrijven in main.cpp):
+- ResourceHub mag wel een instelbaar shader model hebben.
+- Pointsprites voor CPU particles?
+- Shader: het 1.f hardcoden in je W component seems wrong!
+- ResourceHub mag niet case sensitive zijn.
+- assimp gebruiken voor 3D models?
+- Gamma: je textures van 2.2 naar linear halen, naderhand alles terugconverten:
+"However, sRGB is not physically uniform; constant increments do not correspond to constant increases in physical intensity. This means that computing lighting and shading in this space is incorrect. Such computations should be performed in the physically uniform linear color space. Computing shading in sRGB space is like doing math in a world where 1+1=3."
+
+MAIN.CPP:
+- Cast regel: expliciet C-style wanneer je calculaties doet, anders C++ style indien nodig.
+- FAST is eigenlijk single precision.
+- 64-bit compat. moet behouden worden.
+- Target is x86/x64.
+- Compiler is VC++ 2008.
+- #define kValue (not preferred), MACRO, FLAG & TOGGLE
+- for global constants use const T kValue (static is unnecessary, even for tables)
+- Je include inttypes.h niet, maar staat wel in de comments!

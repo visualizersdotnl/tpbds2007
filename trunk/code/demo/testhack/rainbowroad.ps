@@ -1,0 +1,71 @@
+
+#include "../../core/stdps.inc"
+
+// sampler2D textureMap;
+
+struct VS_OUTPUT  { float2 UV : TEXCOORD0; };
+
+float DistanceToSphere(float3 rayPos, float radius)
+{
+	return length(rayPos) - radius;
+}
+
+float DistanceToSphereAt(float3 rayPos, float3 spherePos, float radius)
+{
+	return length(rayPos - spherePos) - radius;
+}
+
+float Scene(float3 rayPos)
+{
+	return DistanceToSphere(rayPos, 0.5);
+}
+
+float3 GradientNormal(float3 position)
+{
+	float epsilon = 0.0001;
+	float3 normal;
+	normal.x = Scene(float3(position.x + epsilon, position.y, position.z)) - Scene(float3(position.x - epsilon, position.y, position.z));
+	normal.y = Scene(float3(position.x, position.y + epsilon, position.z)) - Scene(float3(position.x, position.y - epsilon, position.z));
+	normal.z = Scene(float3(position.x, position.y, position.z + epsilon)) - Scene(float3(position.x, position.y, position.z - epsilon));
+	normal = normalize(normal);
+	return normal;
+}
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	// Ray origin & direction.
+	float3 origin = float3(0, 0, -1);
+	float3 direction = normalize(float3(input.UV.x, input.UV.y, 1)); // [-1, 1] * aspectRatio, [-1, 1]
+
+	// March!
+	float3 rayPos = origin;
+	bool hit = false;
+	int steps = 0;
+	for (steps = 0; steps < 128; ++steps)
+	{
+		float distance = Scene(rayPos);
+		if (distance < 0.01)
+		{
+			hit = true;
+			break;
+		}
+		
+		rayPos += distance * direction;
+	}
+
+	// Shade or bail.
+	if (hit)
+	{
+		// Test light.
+		float3 normal = GradientNormal(rayPos);
+		float3 lightPos = float3(0, 0, -1);
+		float3 lightVec = lightPos - rayPos;
+		float diffuse = max(dot(normal, lightVec), 0);
+		return 0.25 + diffuse;
+	}
+	else 
+	{
+		// Trademark background blue.
+		return float4(0, 0, 1, 0);
+	}
+}

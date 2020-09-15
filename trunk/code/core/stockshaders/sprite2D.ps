@@ -1,0 +1,15 @@
+
+// tpbds -- stock shader: 2D
+
+sampler2D textureMap;
+
+struct VS_OUTPUT 
+{
+	float4 color : COLOR0;
+	float2 UV : TEXCOORD0;
+};
+
+float4 core_ss_sprite2D(in VS_OUTPUT input) : COLOR
+{
+	return input.color * tex2D(textureMap, input.UV);
+}

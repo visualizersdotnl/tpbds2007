@@ -1,0 +1,56 @@
+
+// oldschool free-directional tunnel
+
+#include "../../core/stdps.inc"
+
+// uploaded to PS_USER_CI
+float4 vParams1 : register(c4); 
+float4 vParams2 : register(c5); 
+float4 vParams3 : register(c6); 
+float4x4 mDirRot : register(c7);
+
+#define radius vParams1.x        // tunnel radius
+#define vScroll vParams1.y       // texture scrolling along Z-axis
+#define uTile vParams1.z         // tiling along Z-axis
+#define vTile vParams1.w         // tiling along volume
+#define uvTile vParams1.zw
+#define flowerScale vParams2.x   // flower scale
+#define flowerFreq vParams2.y    // flower frequency mul.
+#define flowerPhase vParams2.z   // flower phase
+#define shadeDepthMul vParams2.w // smaller = darker, higher = brighter          
+#define mipBias vParams3.x       // mip-level biasing along Z-axis
+#define toBox vParams3.y         // linear interpolation factor towards box-shape (0 = circular, 1 = box)
+
+sampler2D textureMap;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	float2 position = input.UV;
+
+	// rotated ray direction
+	float3 direction = normalize(mul(mDirRot, float3(position.x, position.y, 1)));
+
+	// trace against 2D shape (distance gets greater towards center, that's our Z)
+	float A;
+	A = sqr(direction.x) + sqr(direction.y);
+	A += flowerScale * sin(atan2(direction.x, direction.y) * flowerFreq + flowerPhase) - flowerScale;
+//	A = (abs(direction.x) > abs(direction.y)) ? abs(direction.x) : abs(direction.y); // Box.
+//	A = (abs(direction.x) + abs(direction.y)) * 0.5; // Diamond.
+	float boxA = (abs(direction.x) > abs(direction.y)) ? abs(direction.x) : abs(direction.y);
+	A = lerp(A, boxA, toBox);
+	A += kEpsilon; // Prevent division by zero.
+	A = 1 / A;
+	float T = radius * A;
+	float3 intersection = direction * T;
+
+	// derive pixel
+	// important: atan2() yields [-PI, PI]
+	float2 UV = float2(atan2(intersection.y, intersection.x) / kPI, intersection.z + vScroll) * uvTile;
+	float shade = saturate(1 / (T * shadeDepthMul));
+	return shade * tex2Dlod(textureMap, float4(UV.x, UV.y, 0, T * mipBias));
+}

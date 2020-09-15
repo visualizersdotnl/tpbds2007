@@ -1,0 +1,46 @@
+
+// oldschool free-directional planes
+
+#include "../../core/stdps.inc"
+
+// uploaded to PS_USER_CI
+float4 vParams1 : register(c4); 
+float4 vParams2 : register(c5); 
+float4 vParams3 : register(c6); 
+float4x4 mDirRot : register(c7);
+
+#define uTile vParams1.x         // tiling along X-axis
+#define vTile vParams1.y         // tiling along Z-axis
+#define planeOffs vParams1.z     // plane distance to center
+#define shadeDepthMul vParams1.w // smaller = darker, higher = brighter
+#define vScroll vParams2.x       // texture scrolling along Z-axis
+#define wobbleScale vParams2.y   // wobble scale
+#define wobbleFreq vParams2.z    // wobble frequency mul.
+#define wobblePhase vParams2.w   // wobble phase
+#define mipBias vParams3.x       // mip-level biasing along Z-axis
+
+sampler2D textureMap;
+
+struct VS_OUTPUT 
+{
+	float2 UV : TEXCOORD0;
+};
+
+float4 main(in VS_OUTPUT input) : COLOR
+{
+	float2 position = input.UV;
+
+	// rotated ray direction
+	float3 direction = normalize(mul(mDirRot, float3(position.x, position.y, 1)));
+
+	// intersect with appropriate plane
+	float planeDist = planeOffs + wobbleScale * sin(position.x * wobbleFreq + wobblePhase);
+	float T = sign(direction.y) * planeDist / direction.y;
+	float3 intersection = direction * T;
+
+	// derive pixel
+	float2 UV = float2(intersection.x * uTile, intersection.z * vTile + vScroll);
+	float depth = sqrt(sqr(intersection.x) + sqr(T));
+	float shade = saturate(1 / (depth * shadeDepthMul));
+	return shade * tex2Dbias(textureMap, float4(UV.x, UV.y, 0, T * mipBias));
+}

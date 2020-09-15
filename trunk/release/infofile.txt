@@ -1,0 +1,24 @@
+
+secret desire (Bypass 2012 ft. Desire)
+
+required:
+  Windows
+  DirectX 9
+  shader model 3.0
+
+code:
+  Superplek/Bypass (and TPB, of course)
+
+2D graphics:
+  Forcer/Desire
+
+electro:
+  I-F (original: 'Secret desire', released on Viewlexx Records in 1999)
+  Little Bitchard (edit)
+
+third party:
+  BASS 2.3 by Ian Luck
+  Intel SPMD Program Compiler
+  GNU Rocket by Erik Faye-Lund & Egbert Teeselink
+
+soundtrack used with permission from I-F (see soundtrack_permission.txt)
