@@ -1,5 +1,13 @@
 
-// tpbds -- simple 4-tap blur blitter (the name Kawase was mentioned at GDC 2003)
+// tpbds -- simple 4-tap blur blitter
+
+// 08/03/2026
+
+// As far as I know what Kawase actually meant is to blend between downsampled versions this way instead of just
+// iteratively accumulating blur like this (which isn't very efficient); we used to do that to make the first bloom
+// and depth of field effects on the PS2-generation of consoles.
+
+// Given that this codebase is 20+ years old and deprecated I'm not fixing anything, but just in case someone stumbles across this.
 
 #include "main.h"
 #include "rendertargets.h" // includes kawase.h
@@ -95,3 +103,4 @@ void KawaseBlurBlitter::Filter(uint32_t blendMode, float alpha, bool restoreTarg
 	m_renderer.SetTexture(0, m_pTargets[bufferFlip], kTexFlagImageClamp);
 	SpriteQuad(m_renderer, NULL, Vector2(0.f), Vector2(1.f), 0.f, Vector2(1.f), AlphaAndRGBToD3DCOLOR(alpha, 0xffffff));
 }
+
