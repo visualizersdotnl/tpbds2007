@@ -1,5 +1,5 @@
 
-// tbpds -- hypnoglow: legacy zoom blur (based on Kawase blur blitter)
+// tbpds -- hypnoglow: legacy zoom blur
 
 #include "main.h"
 #include "rendertargets.h" // includes hypnoglow.h
@@ -121,3 +121,4 @@ void HypnoglowBlitter::Filter(uint32_t blendMode, float alpha, bool restoreTarge
 	m_renderer.SetTexture(0, m_pTargets[bufferFlip], kTexFlagImageClamp);
 	SpriteQuad(m_renderer, NULL, Vector2(0.f), Vector2(1.f), 0.f, Vector2(1.f), AlphaAndRGBToD3DCOLOR(alpha, 0xffffff));
 }
+
