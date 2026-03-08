@@ -1,6 +1,9 @@
 
 // tpbds -- simple 4-tap blur blitter (the name Kawase was mentioned at GDC 2003)
 
+// 08/03/2026
+// This isn't a true Kawase blur immplementation (see .cpp for details).
+
 #ifndef _KAWASE_H_
 #define _KAWASE_H_
 
@@ -42,3 +45,4 @@ private:
 };
 
 #endif // _KAWASE_H_
+
